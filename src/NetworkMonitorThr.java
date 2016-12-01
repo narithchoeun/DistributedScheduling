@@ -1,3 +1,4 @@
-public class NetworkMonitorThr {
-
+public class NetworkMonitorThread
+{
+	// Implements ServerSocket
 }

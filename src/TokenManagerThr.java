@@ -1,3 +1,4 @@
-public class TokenManagerThr {
-
+public class TokenManagerThread
+{
+	// Implements Socket
 }
