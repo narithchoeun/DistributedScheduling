@@ -6,14 +6,20 @@ public class WorkerThread extends Thread
     private int token;
     private Random rand = new Random();
     private int maxSleepTime = 40;
+    private int iterations = 100;
 
     //construct worker with an id
     public WorkerThread(int id)
     {
         this.id = id;
+    }
 
-        requestToken();
-        System.out.println("Token requested from worker " + this.id);
+    public void run()
+    {
+        for(int i = 0; i < iterations; i++) {
+            requestToken();
+            System.out.println("On iteration " + i + " worker " + id + " requested the token");
+        }
     }
 
     /*

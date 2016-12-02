@@ -23,7 +23,12 @@ public class TokenManagerThread extends Thread
     }
 
 	//TODO: run() will loop
-
+    public void run()
+    {
+        while(true) { 
+            checkWorkers();
+        }
+    }
 
 	// if token is returned, flag token is available
     public void handleToken(int token)

@@ -13,6 +13,11 @@ public class NetworkMonitorThread extends Thread
     
     public NetworkMonitorThread()
     {
+
+    }
+
+    public void run()
+    {
         try {
             startServerSocket();
         } catch (IOException e) {

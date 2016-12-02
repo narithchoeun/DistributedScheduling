@@ -7,7 +7,9 @@ public class Main
 
     public static void main(String[] args)
     {
-        for(int i = 0; i < num_workers; i++)
-            workers[i] = new WorkerThread(i); 
+        for(int i = 0; i < num_workers; i++) {
+            workers[i] = new WorkerThread(i);
+            workers[i].start();
+        }
     }
 }
