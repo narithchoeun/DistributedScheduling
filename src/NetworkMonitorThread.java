@@ -1,3 +1,4 @@
+import java.util.concurrent.locks.*;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.ServerSocket;
@@ -11,11 +12,6 @@ public class NetworkMonitorThread extends Thread
     private ServerSocket serverSocket;
     private Socket ss;
     
-    public NetworkMonitorThread()
-    {
-
-    }
-
     public void run()
     {
         try {
@@ -36,11 +32,11 @@ public class NetworkMonitorThread extends Thread
         System.out.println("Received packet " + packet);
 
         // if packet a worker has been added to remote queue
-        if (packet == -1) {
+        if (packet == Main.remote_token) {
             Main.tokenManager.queue.add(packet);
         } 
         // If a worker has been popped from the remote queue
-        else if (packet == -2) {
+        else if (packet == Main.busy_token) {
             Main.tokenManager.remotePopFromQueue();
         }
         // If the token has been sent
@@ -67,7 +63,7 @@ public class NetworkMonitorThread extends Thread
 
         try {
             PrintStream p = new PrintStream(socket.getOutputStream());
-            p.println(-1);
+            p.println(Main.null_token);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -79,7 +75,7 @@ public class NetworkMonitorThread extends Thread
         
         try {
             PrintStream p = new PrintStream(socket.getOutputStream());
-            p.println(-2);
+            p.println(Main.busy_token);
         } catch (IOException e) {
             e.printStackTrace();
         }
