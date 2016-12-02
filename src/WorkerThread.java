@@ -17,7 +17,7 @@ public class WorkerThread extends Thread
 
 	// make a request for the local token (insert in queue & inform local TokenManagerThr) - wait for token to be allocated by local TokenManagerThr
     private void requestToken() {
-        Main.tokenManager.queue.add(this.id);    
+        Main.tokenManager.addWorkerToQueue(this.id); 
     }
 
 	// use token: output counter value & increment counter value

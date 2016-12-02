@@ -5,6 +5,8 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
+// TODO: Implement Locks
+
 public class TokenManagerThread extends Thread
 {
 	public static Queue<Integer> queue = new LinkedList<Integer>();
@@ -29,6 +31,18 @@ public class TokenManagerThread extends Thread
     	checkWorkers();
     }
 
+    public void addWorkerToQueue(int worker){
+    	queue.add(worker);
+
+    	checkWorkers();
+    }
+
+    public void remotePopFromQueue()
+    {
+    	if (queue.peek() != null)
+            queue.remove();
+    }
+
     public void checkWorkers()
     {
     	// if (token not available) or (token at remote host) or (queue empty)
@@ -45,7 +59,7 @@ public class TokenManagerThread extends Thread
 					token_available = false;
 					token = -1000;
 					local_requester = false;
-				} catch (UnknownHostException e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			} 
@@ -54,7 +68,7 @@ public class TokenManagerThread extends Thread
 					local_requester = true;
 					Main.networkMonitor.popRemoteManagerQueue();
 					Main.workers[id].handleToken(this.token);
-				} catch (UnknownHostException e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
