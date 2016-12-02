@@ -7,6 +7,7 @@ public class WorkerThread extends Thread
     private Random rand = new Random();
     private int maxSleepTime = 40;
 
+    //construct worker with an id
     public WorkerThread(int id)
     {
         this.id = id;
@@ -15,11 +16,19 @@ public class WorkerThread extends Thread
         System.out.println("Token requested from worker " + this.id);
     }
 
+    /*
+    TODO: loop as follows for 100 iterations:
+        1. requestToken()
+        2. wait() for TokenManagerThread to enqueue
+        3. after being signaled(), handleToken()
+    */
+
 	// make a request for the local token (insert in queue & inform local TokenManagerThr) - wait for token to be allocated by local TokenManagerThr
     private void requestToken() {
-        Main.tokenManager.addWorkerToQueue(this.id); 
+        Main.tokenManager.addWorkerToQueue(this.id);
     }
 
+    // TODO: figure out how to increment and manage counter locally and remotely
 	// use token: output counter value & increment counter value
     public void handleToken(int token)
     {
@@ -27,7 +36,7 @@ public class WorkerThread extends Thread
 
         try {
             sleep(5);
-        } catch (Exception e) { 
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -37,7 +46,7 @@ public class WorkerThread extends Thread
 
         try {
             sleep(randomTime());
-        } catch (Exception e) { 
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

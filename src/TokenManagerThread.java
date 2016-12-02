@@ -22,6 +22,9 @@ public class TokenManagerThread extends Thread
     	local_requester = false;
     }
 
+	//TODO: run() will loop
+
+
 	// if token is returned, flag token is available
     public void handleToken(int token)
     {
@@ -47,12 +50,14 @@ public class TokenManagerThread extends Thread
     {
     	// if (token not available) or (token at remote host) or (queue empty)
 		// wait here for next action
+		//TODO: maybe use await() to be signalled when something is actually in the queue, busy-wait
     	if (queue.peek() == null) {
     		System.out.println("Waiting for next action");
-		} 
+		}
 		else {
 			int id = queue.remove();
 
+			//send to remote
 			if (id == -1 && token_available) {
 				try {
 					Main.networkMonitor.sendToken(token);
@@ -62,7 +67,8 @@ public class TokenManagerThread extends Thread
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			} 
+			}
+			//handle token locally to local worker based on their id
 			else if (id != -1 && token_available) {
 				try {
 					local_requester = true;
