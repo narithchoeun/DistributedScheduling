@@ -36,7 +36,8 @@ public class NetworkMonitorThread extends Thread
         } 
         // If a worker has been popped from the remote queue
         else if (packet == -2) {
-            Main.tokenManager.queue.remove();
+            if (Main.tokenManager.queue.peek() != null)
+                Main.tokenManager.queue.remove();
         }
         // If the token has been sent
         else {
