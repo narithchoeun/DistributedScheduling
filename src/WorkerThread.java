@@ -16,16 +16,23 @@ public class WorkerThread extends Thread
         this.id = id;
     }
 
+    // add to queue, wait
+    // increment global token counter
+    // return token to token manager and wait
     public void run()
     {
         for(int i = 0; i < iterations; i++) {
             requestToken();
             System.out.println("On iteration " + i + " worker " + id + " requested the token");
 
+            lock.lock();
             try {
                 worker_condition.await();
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                // System.out.println(e.getMessage());
+                e.printStackTrace();
+            } finally {
+                lock.unlock();
             }
 
             handleToken();
@@ -34,7 +41,8 @@ public class WorkerThread extends Thread
             try {
                 sleep(randomTime());
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                // System.out.println(e.getMessage());
+                e.printStackTrace();
             }
         }
     }
@@ -60,6 +68,7 @@ public class WorkerThread extends Thread
     }
 
 	// return token to local TokenManagerThr
+    // reset token
     private void returnToken()
     {
         Main.tokenManager.handleToken(this.token);

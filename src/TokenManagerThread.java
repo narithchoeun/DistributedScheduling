@@ -25,7 +25,7 @@ public class TokenManagerThread extends Thread
 
     public void run()
     {
-        while(true) { 
+        while(true) {
             checkWorkers();
         }
     }
@@ -42,11 +42,12 @@ public class TokenManagerThread extends Thread
     public void addWorkerToQueue(int worker)
     {
         lock.lock();
-        
+
         try {
     	   queue.add(worker);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            // System.out.println(e.getMessage());
+			e.printStackTrace();
         } finally {
             lock.unlock();
         }
@@ -57,11 +58,12 @@ public class TokenManagerThread extends Thread
     public void addRemoteWorkerToQueue()
     {
         lock.lock();
-        
+
         try {
            queue.add(Main.remote_token);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            // System.out.println(e.getMessage());
+			e.printStackTrace();
         } finally {
             lock.unlock();
         }
@@ -75,16 +77,18 @@ public class TokenManagerThread extends Thread
         	if (queue.peek() != null)
                 queue.remove();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            // System.out.println(e.getMessage());
+			e.printStackTrace();
         } finally {
             lock.unlock();
         }
     }
 
+	// handle workers requests by delegating token whether it is local/remote
     public void checkWorkers()
     {
         lock.lock();
-            
+
         try {
         	// if (token not available) or (token at remote host) or (queue empty)
     		// wait here for next action
@@ -94,7 +98,7 @@ public class TokenManagerThread extends Thread
                 token_condition.await();
 
                 System.out.println("Signaled token manager thread");
-                
+
                 checkWorkers();
     		}
     		else {
@@ -112,30 +116,32 @@ public class TokenManagerThread extends Thread
 
                         checkWorkers();
     				} catch (Exception e) {
-    					System.out.println(e.getMessage());
+    					// System.out.println(e.getMessage());
+						// e.printStackTrace();
     				}
     			}
-    			//handle token locally to local worker based on their id
+    			// handle token locally to local worker based on their id
     			else if (id != -1 && token_available) {
     				try {
     					local_requester = true;
     					Main.networkMonitor.popRemoteManagerQueue();
-    					
+
                         Main.workers[id].setToken(this.token);
                         this.token = Main.null_token;
-                        
+
                         Main.workers[id].worker_condition.signal();
-                        
+
                         token_condition.await();
 
                         checkWorkers();
     				} catch (Exception e) {
-    					System.out.println(e.getMessage());
+    					// System.out.println(e.getMessage());
+						// e.printStackTrace();
     				}
     			}
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            // e.printStackTrace();
         } finally {
             lock.unlock();
         }
