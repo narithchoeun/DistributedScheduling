@@ -89,33 +89,33 @@ public class NetworkMonitorThread extends Thread
         // }
     }
 
-    // public void sendToken(int token) throws Exception
-    // {
-    //     try {
-    //         PrintStream p = new PrintStream(socket.getOutputStream());
-    //         p.println(token);
-    //     } catch (IOException e) {
-    //         e.printStackTrace();
-    //     }
-    // }
+    public void sendToken(int token) throws Exception
+    {
+        // try {
+        //     PrintStream p = new PrintStream(socket.getOutputStream());
+        //     p.println(token);
+        // } catch (IOException e) {
+        //     e.printStackTrace();
+        // }
+    }
 
-    // public void addWorkerToRemoteQueue() throws Exception
-    // {
-    //     try {
-    //         PrintStream p = new PrintStream(socket.getOutputStream());
-    //         p.println(Main.null_token);
-    //     } catch (IOException e) {
-    //         e.printStackTrace();
-    //     }
-    // }
+    public void addWorkerToRemoteQueue() throws Exception
+    {
+        // try {
+        //     PrintStream p = new PrintStream(socket.getOutputStream());
+        //     p.println(Main.null_token);
+        // } catch (IOException e) {
+        //     e.printStackTrace();
+        // }
+    }
 
-    // public void popRemoteManagerQueue() throws Exception
-    // {        
-    //     try {
-    //         PrintStream p = new PrintStream(socket.getOutputStream());
-    //         p.println(Main.busy_token);
-    //     } catch (IOException e) {
-    //         e.printStackTrace();
-    //     }
-    // }
+    public void popRemoteManagerQueue() throws Exception
+    {        
+        // try {
+        //     PrintStream p = new PrintStream(socket.getOutputStream());
+        //     p.println(Main.busy_token);
+        // } catch (IOException e) {
+        //     e.printStackTrace();
+        // }
+    }
 }
