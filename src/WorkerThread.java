@@ -25,9 +25,7 @@ public class WorkerThread extends Thread
             try {
                 worker_condition.await();
             } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                lock.unlock();
+                System.out.println(e.getMessage());
             }
 
             handleToken();
@@ -36,7 +34,7 @@ public class WorkerThread extends Thread
             try {
                 sleep(randomTime());
             } catch (Exception e) {
-                e.printStackTrace();
+                System.out.println(e.getMessage());
             }
         }
     }

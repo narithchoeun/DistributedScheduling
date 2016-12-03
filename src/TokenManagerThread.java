@@ -6,8 +6,6 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
-// TODO: Implement Locks
-
 public class TokenManagerThread extends Thread
 {
 	private static Lock lock = new ReentrantLock();
@@ -41,18 +39,32 @@ public class TokenManagerThread extends Thread
     	checkWorkers();
     }
 
-    public void addWorkerToQueue(int worker){
+    public void addWorkerToQueue(int worker)
+    {
         lock.lock();
         
         try {
     	   queue.add(worker);
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         } finally {
             lock.unlock();
         }
 
     	checkWorkers();
+    }
+
+    public void addRemoteWorkerToQueue()
+    {
+        lock.lock();
+        
+        try {
+           queue.add(Main.remote_token);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        } finally {
+            lock.unlock();
+        }
     }
 
     public void remotePopFromQueue()
@@ -63,7 +75,7 @@ public class TokenManagerThread extends Thread
         	if (queue.peek() != null)
                 queue.remove();
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         } finally {
             lock.unlock();
         }
@@ -78,8 +90,11 @@ public class TokenManagerThread extends Thread
     		// wait here for next action
         	if (queue.peek() == null) {
         		System.out.println("Waiting for next action");
-                queue_condition.await();
 
+                token_condition.await();
+
+                System.out.println("Signaled token manager thread");
+                
                 checkWorkers();
     		}
     		else {
@@ -97,7 +112,7 @@ public class TokenManagerThread extends Thread
 
                         checkWorkers();
     				} catch (Exception e) {
-    					e.printStackTrace();
+    					System.out.println(e.getMessage());
     				}
     			}
     			//handle token locally to local worker based on their id
@@ -115,12 +130,12 @@ public class TokenManagerThread extends Thread
 
                         checkWorkers();
     				} catch (Exception e) {
-    					e.printStackTrace();
+    					System.out.println(e.getMessage());
     				}
     			}
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         } finally {
             lock.unlock();
         }
