@@ -28,10 +28,8 @@ public class NetworkMonitorThread extends Thread
         try (
             ServerSocket serverSocket = new ServerSocket(port);
             Socket clientSocket = serverSocket.accept();
-            PrintWriter out =
-                new PrintWriter(clientSocket.getOutputStream(), true);                   
-            BufferedReader in = new BufferedReader(
-                new InputStreamReader(clientSocket.getInputStream()));
+            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);                   
+            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         ) {
             String inputLine;
             while ((inputLine = in.readLine()) != null) {
@@ -39,12 +37,12 @@ public class NetworkMonitorThread extends Thread
             }
         } catch (IOException e) {
             System.out.println("Exception caught when trying to listen on port "
-                + portNumber + " or listening for a connection");
+                + port + " or listening for a connection");
             System.out.println(e.getMessage());
         }
 
         try (
-            Socket echoSocket = new Socket(hostName, portNumber);
+            Socket echoSocket = new Socket(hostName, port);
             PrintWriter out =
                 new PrintWriter(echoSocket.getOutputStream(), true);
             BufferedReader in =
@@ -91,33 +89,33 @@ public class NetworkMonitorThread extends Thread
         // }
     }
 
-    public void sendToken(int token) throws Exception
-    {
-        try {
-            PrintStream p = new PrintStream(socket.getOutputStream());
-            p.println(token);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+    // public void sendToken(int token) throws Exception
+    // {
+    //     try {
+    //         PrintStream p = new PrintStream(socket.getOutputStream());
+    //         p.println(token);
+    //     } catch (IOException e) {
+    //         e.printStackTrace();
+    //     }
+    // }
 
-    public void addWorkerToRemoteQueue() throws Exception
-    {
-        try {
-            PrintStream p = new PrintStream(socket.getOutputStream());
-            p.println(Main.null_token);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+    // public void addWorkerToRemoteQueue() throws Exception
+    // {
+    //     try {
+    //         PrintStream p = new PrintStream(socket.getOutputStream());
+    //         p.println(Main.null_token);
+    //     } catch (IOException e) {
+    //         e.printStackTrace();
+    //     }
+    // }
 
-    public void popRemoteManagerQueue() throws Exception
-    {        
-        try {
-            PrintStream p = new PrintStream(socket.getOutputStream());
-            p.println(Main.busy_token);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+    // public void popRemoteManagerQueue() throws Exception
+    // {        
+    //     try {
+    //         PrintStream p = new PrintStream(socket.getOutputStream());
+    //         p.println(Main.busy_token);
+    //     } catch (IOException e) {
+    //         e.printStackTrace();
+    //     }
+    // }
 }
