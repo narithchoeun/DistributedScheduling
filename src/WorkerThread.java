@@ -3,13 +3,14 @@ import java.util.Random;
 
 public class WorkerThread extends Thread
 {
+    private static Lock lock = new ReentrantLock();
+    public final Condition worker_condition = lock.newCondition();
     private int id;
     private int token;
     private Random rand = new Random();
     private int maxSleepTime = 40;
     private int iterations = 100;
 
-    //construct worker with an id
     public WorkerThread(int id)
     {
         this.id = id;
@@ -21,7 +22,13 @@ public class WorkerThread extends Thread
             requestToken();
             System.out.println("On iteration " + i + " worker " + id + " requested the token");
 
-            this.await();
+            try {
+                worker_condition.await();
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                lock.unlock();
+            }
 
             handleToken();
             returnToken();
@@ -40,19 +47,16 @@ public class WorkerThread extends Thread
     }
 
 	// make a request for the local token (insert in queue & inform local TokenManagerThr) - wait for token to be allocated by local TokenManagerThr
-    private void requestToken() {
+    private void requestToken()
+    {
         Main.tokenManager.addWorkerToQueue(this.id);
     }
 
-    // TODO: figure out how to increment and manage counter locally and remotely
+    // TODO: increment and manage counter locally and remotely
 	// use token: output counter value & increment counter value
     public void handleToken()
     {
-        try {
-            sleep(5);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        System.out.println("Increment counter locally and remotely");
 
         System.out.println("Token Handled from worker " + this.id);
     }
@@ -63,7 +67,7 @@ public class WorkerThread extends Thread
         Main.tokenManager.handleToken(this.token);
         this.token = Main.null_token;
 
-        Main.tokenManager.signal();
+        Main.tokenManager.token_condition.signal();
     }
 
  	// sleep for 50 msec (adjust sleep time between 10-50 ms as needed)
