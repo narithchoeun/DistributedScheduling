@@ -29,7 +29,6 @@ public class WorkerThread extends Thread
             try {
                 worker_condition.await();
             } catch (Exception e) {
-                // System.out.println(e.getMessage());
                 e.printStackTrace();
             } finally {
                 lock.unlock();
@@ -41,7 +40,6 @@ public class WorkerThread extends Thread
             try {
                 sleep(randomTime());
             } catch (Exception e) {
-                // System.out.println(e.getMessage());
                 e.printStackTrace();
             }
         }
