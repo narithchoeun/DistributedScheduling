@@ -3,13 +3,12 @@ import java.util.Random;
 
 public class WorkerThread extends Thread
 {
-    private static Lock lock = new ReentrantLock();
-    public final Condition condition = lock.newCondition();
     private int id;
     private int token;
     private Random rand = new Random();
     private int maxSleepTime = 40;
-    private int iterations = 100;
+    private int counter = 0;
+    private int max_iterations = 100;
 
     public WorkerThread(int id)
     {
@@ -21,56 +20,54 @@ public class WorkerThread extends Thread
     // return token to token manager and wait
     public void run()
     {
-        for(int i = 0; i < iterations; i++) {
-            requestToken();
-            System.out.println("On iteration " + (i+1) + " worker " + id + " requested the token");
-
-            lock.lock();
-            try {
-                condition.await();
-
-                handleToken();
-                returnToken();
-
-                try {
-                    sleep(randomTime());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                lock.unlock();
-            }
-        }
-    }
-
-    public void setToken(int token)
-    {
-        this.token = token;
+        requestToken();
+        System.out.println("On iteration " + counter + " worker " + id + " requested the token");
     }
 
 	// make a request for the local token (insert in queue & inform local TokenManagerThr) - wait for token to be allocated by local TokenManagerThr
     private void requestToken()
     {
-        Main.tokenManager.addWorkerToQueue(this.id);
+        if (counter < max_iterations) {
+            counter++;
+            Main.tokenManager.addWorkerToQueue(this.id);
+        }
     }
 
     // TODO: increment and manage counter locally and remotely
 	// use token: output counter value & increment counter value
-    public void handleToken()
+    public void handleToken(int token) throws Exception
     {
+        this.token = token;
+
         System.out.println("Increment counter locally and remotely");
 
         System.out.println("Token Handled from worker " + this.id);
+        
+        returnToken();
     }
 
 	// return token to local TokenManagerThr
     // reset token
-    private void returnToken()
+    private void returnToken() throws Exception
     {
         Main.tokenManager.handleToken(this.token);
         this.token = Main.null_token;
+
+        Main.shared_counter++;
+        Main.networkMonitor.incrementSharedCounter();
+
+        sleepWorker();
+    }
+
+    private void sleepWorker()
+    {
+        try {
+            sleep(randomTime());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        requestToken();
     }
 
  	// sleep for 50 msec (adjust sleep time between 10-50 ms as needed)

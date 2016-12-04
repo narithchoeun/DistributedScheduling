@@ -94,6 +94,11 @@ public class NetworkMonitorThread extends Thread
             System.out.println("Remote Pop from Queue");
             Main.tokenManager.remotePopFromQueue();
         }
+        // If increment remote counter
+        else if (item == Main.remote_increment) {
+            System.out.println("Remote counter increment");
+            Main.shared_counter++;
+        }
         // If the token has been sent
         else {
             Main.tokenManager.handleToken(item);
@@ -130,6 +135,18 @@ public class NetworkMonitorThread extends Thread
             try {
                 PrintStream p = new PrintStream(socket.getOutputStream());
                 p.println(Main.busy_token);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void incrementSharedCounter() throws Exception
+    {
+        if (socket != null) { 
+            try {
+                PrintStream p = new PrintStream(socket.getOutputStream());
+                p.println(Main.remote_increment);
             } catch (IOException e) {
                 e.printStackTrace();
             }

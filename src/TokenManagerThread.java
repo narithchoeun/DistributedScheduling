@@ -93,7 +93,6 @@ public class TokenManagerThread extends Thread
             }
 
             id = queue.remove();
-            Main.networkMonitor.popRemoteManagerQueue();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -122,11 +121,8 @@ public class TokenManagerThread extends Thread
 				local_requester = true;
 				Main.networkMonitor.popRemoteManagerQueue();
 
-                Main.workers[id].setToken(this.token);
+                Main.workers[id].handleToken(this.token);
                 this.token = Main.null_token;
-
-                // HERE IS THE PROBLEM VVV
-                Main.workers[id].condition.signal();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
