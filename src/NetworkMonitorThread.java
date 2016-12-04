@@ -13,7 +13,7 @@ public class NetworkMonitorThread extends Thread
     private ServerSocket serverSocket;
     private Socket socket;
     private int port = 8000;
-    private String hostName = "192.168.1.4";
+    private String hostName = "10.39.58.60";
     
     public void run()
     {
