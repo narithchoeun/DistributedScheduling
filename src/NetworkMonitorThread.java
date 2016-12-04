@@ -11,7 +11,7 @@ import java.io.*;
 public class NetworkMonitorThread extends Thread
 {
     private ServerSocket serverSocket;
-    private Socket ss;
+    private Socket socket;
     private int port = 8000;
     private String hostName = "192.168.1.4";
     
@@ -30,67 +30,46 @@ public class NetworkMonitorThread extends Thread
         InetAddress addr = InetAddress.getByName(hostName);
         ServerSocket serverSocket = new ServerSocket(port, 50, addr);
 
-        Socket clientSocket = serverSocket.accept();
+        socket = serverSocket.accept();
         System.out.println("Server accepted");
         
 
         try (
-            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);                   
-            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);                   
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         ) {
-            PrintStream p = new PrintStream(clientSocket.getOutputStream());
-            p.println("token");
+            // Start Sever with Token give to client on connection
+            PrintStream p = new PrintStream(socket.getOutputStream());
+            p.println(Main.token);
             
             String clientInput;
             while ((clientInput = in.readLine()) != null) {
-                // out.println(clientInput);
-                System.out.println("Message from server " + clientInput);
+                System.out.println("Message from client " + clientInput);
                 
-                // PrintStream p = new PrintStream(clientSocket.getOutputStream());
-                p.println("token 2");
+                handlePacket(clientInput);
             }
         } catch (IOException e) {
             System.out.println("Exception caught when trying to listen on port "
                 + port + " or listening for a connection");
             System.out.println(e.getMessage());
         }
-
-        // BufferedReader reader = new BufferedReader(new InputStreamReader(ss.getInputStream()));
-        // int packet = Integer.parseInt(reader.readLine());
-        
-        // System.out.println("Received packet " + packet);
-
-        // // if packet a worker has been added to remote queue
-        // if (packet == Main.remote_token) {
-        //     Main.tokenManager.queue.add(packet);
-        // } 
-        // // If a worker has been popped from the remote queue
-        // else if (packet == Main.busy_token) {
-        //     Main.tokenManager.remotePopFromQueue();
-        // }
-        // // If the token has been sent
-        // else {
-        //     Main.tokenManager.handleToken(packet);
-        // }
     }
 
     private void startClientSocket() throws IOException
     {
         System.out.println("Trying to connect to server...");
+        socket = new Socket(hostName, port);
+
         try (
-            Socket socket = new Socket(hostName, port);
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
             BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            // BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
         ) {
             
             String serverInput;
             while ((serverInput = input.readLine()) != null) {
-                // out.println(serverInput);
                 System.out.println("Message from server " + serverInput);
                 
-                PrintStream p = new PrintStream(socket.getOutputStream());
-                p.println("token");
+                handlePacket(serverInput);
             }
         } catch (UnknownHostException e) {
             System.err.println("Don't know about host " + hostName);
@@ -101,33 +80,59 @@ public class NetworkMonitorThread extends Thread
         } 
     }
 
+    public void handlePacket(String packet)
+    {
+        int item = Integer.parseInt(packet);
+
+        // if packet a worker has been added to remote queue
+        if (item == Main.remote_token) {
+            System.out.println("Add Remote Worker to Queue");
+            Main.tokenManager.addRemoteWorkerToQueue();
+        } 
+        // If a worker has been popped from the remote queue
+        else if (item == Main.busy_token) {
+            System.out.println("Remote Pop from Queue");
+            Main.tokenManager.remotePopFromQueue();
+        }
+        // If the token has been sent
+        else {
+            Main.tokenManager.handleToken(item);
+        }
+    }
+
     public void sendToken(int token) throws Exception
     {
-        // try {
-        //     PrintStream p = new PrintStream(socket.getOutputStream());
-        //     p.println(token);
-        // } catch (IOException e) {
-        //     e.printStackTrace();
-        // }
+        if (socket != null) {
+            try {
+                PrintStream p = new PrintStream(socket.getOutputStream());
+                p.println(token);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void addWorkerToRemoteQueue() throws Exception
     {
-        // try {
-        //     PrintStream p = new PrintStream(socket.getOutputStream());
-        //     p.println(Main.null_token);
-        // } catch (IOException e) {
-        //     e.printStackTrace();
-        // }
+        if (socket != null) {
+            try {
+                PrintStream p = new PrintStream(socket.getOutputStream());
+                p.println(Main.remote_token);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void popRemoteManagerQueue() throws Exception
-    {        
-        // try {
-        //     PrintStream p = new PrintStream(socket.getOutputStream());
-        //     p.println(Main.busy_token);
-        // } catch (IOException e) {
-        //     e.printStackTrace();
-        // }
+    {
+        if (socket != null) { 
+            try {
+                PrintStream p = new PrintStream(socket.getOutputStream());
+                p.println(Main.busy_token);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

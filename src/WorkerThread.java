@@ -4,7 +4,7 @@ import java.util.Random;
 public class WorkerThread extends Thread
 {
     private static Lock lock = new ReentrantLock();
-    public final Condition worker_condition = lock.newCondition();
+    public final Condition condition = lock.newCondition();
     private int id;
     private int token;
     private Random rand = new Random();
@@ -23,24 +23,24 @@ public class WorkerThread extends Thread
     {
         for(int i = 0; i < iterations; i++) {
             requestToken();
-            System.out.println("On iteration " + i + " worker " + id + " requested the token");
+            System.out.println("On iteration " + (i+1) + " worker " + id + " requested the token");
 
             lock.lock();
             try {
-                worker_condition.await();
+                condition.await();
+
+                handleToken();
+                returnToken();
+
+                try {
+                    sleep(randomTime());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
                 lock.unlock();
-            }
-
-            handleToken();
-            returnToken();
-
-            try {
-                sleep(randomTime());
-            } catch (Exception e) {
-                e.printStackTrace();
             }
         }
     }
@@ -71,8 +71,6 @@ public class WorkerThread extends Thread
     {
         Main.tokenManager.handleToken(this.token);
         this.token = Main.null_token;
-
-        Main.tokenManager.token_condition.signal();
     }
 
  	// sleep for 50 msec (adjust sleep time between 10-50 ms as needed)
