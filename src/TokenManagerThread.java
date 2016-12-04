@@ -7,7 +7,9 @@ import java.net.UnknownHostException;
 import java.util.Scanner;
 
 public class TokenManagerThread extends Thread
-{    
+{
+	private static Lock lock = new ReentrantLock();
+    
     // Queue in Main?
     private static Queue<Integer> queue = new LinkedList<Integer>();
     private int token;
