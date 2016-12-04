@@ -7,9 +7,8 @@ import java.net.UnknownHostException;
 import java.util.Scanner;
 
 public class TokenManagerThread extends Thread
-{
-	private static Lock lock = new ReentrantLock();
-    // public final Condition condition = lock.newCondition();
+{    
+    // Queue in Main?
     private static Queue<Integer> queue = new LinkedList<Integer>();
     private int token;
     private boolean token_available;
@@ -85,7 +84,7 @@ public class TokenManagerThread extends Thread
         int id = -3;
 
         lock.lock();
-        queue.add(0);
+        // queue.add(0);
         try {
             if (queue.peek() == null) {
                 System.out.println("Waiting for next action");
