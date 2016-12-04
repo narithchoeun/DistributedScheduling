@@ -25,9 +25,11 @@ public class NetworkMonitorThread extends Thread
 
     private void startServerSocket() throws IOException
     {
+        ServerSocket serverSocket = new ServerSocket(port);
+        System.out.println("Server is waiting for connection");
+        Socket clientSocket = serverSocket.accept();
+        System.out.println("Server accepted");
         try (
-            ServerSocket serverSocket = new ServerSocket(port);
-            Socket clientSocket = serverSocket.accept();
             PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);                   
             BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         ) {
@@ -40,35 +42,6 @@ public class NetworkMonitorThread extends Thread
                 + port + " or listening for a connection");
             System.out.println(e.getMessage());
         }
-
-        try (
-            Socket echoSocket = new Socket(hostName, port);
-            PrintWriter out =
-                new PrintWriter(echoSocket.getOutputStream(), true);
-            BufferedReader in =
-                new BufferedReader(
-                    new InputStreamReader(echoSocket.getInputStream()));
-            BufferedReader stdIn =
-                new BufferedReader(
-                    new InputStreamReader(System.in))
-        ) {
-            String userInput;
-            while ((userInput = stdIn.readLine()) != null) {
-                out.println(userInput);
-                System.out.println("echo: " + in.readLine());
-            }
-        } catch (UnknownHostException e) {
-            System.err.println("Don't know about host " + hostName);
-            System.exit(1);
-        } catch (IOException e) {
-            System.err.println("Couldn't get I/O for the connection to " +
-                hostName);
-            System.exit(1);
-        } 
-
-        // serverSocket = new ServerSocket(port);
-        // clientSocket = serverSocket.accept();
-        // clientSocket = new Socket(address, port);
 
         // BufferedReader reader = new BufferedReader(new InputStreamReader(ss.getInputStream()));
         // int packet = Integer.parseInt(reader.readLine());
@@ -87,6 +60,29 @@ public class NetworkMonitorThread extends Thread
         // else {
         //     Main.tokenManager.handleToken(packet);
         // }
+    }
+
+    private void startClientSocket() throws IOException
+    {
+        try (
+            Socket echoSocket = new Socket(hostName, port);
+            PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
+            BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
+            BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in))
+        ) {
+            String userInput;
+            while ((userInput = stdIn.readLine()) != null) {
+                out.println(userInput);
+                System.out.println("echo: " + in.readLine());
+            }
+        } catch (UnknownHostException e) {
+            System.err.println("Don't know about host " + hostName);
+            System.exit(1);
+        } catch (IOException e) {
+            System.err.println("Couldn't get I/O for the connection to " +
+                hostName);
+            System.exit(1);
+        } 
     }
 
     public void sendToken(int token) throws Exception
