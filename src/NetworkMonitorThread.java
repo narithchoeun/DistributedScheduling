@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 import java.io.*;
@@ -12,12 +13,13 @@ public class NetworkMonitorThread extends Thread
     private ServerSocket serverSocket;
     private Socket ss;
     private int port = 8000;
-    private String hostName = "10.39.50.92";
+    private String hostName = "192.168.1.4";
     
     public void run()
     {
         try {
             startServerSocket();
+            // startClientSocket();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -25,10 +27,12 @@ public class NetworkMonitorThread extends Thread
 
     private void startServerSocket() throws IOException
     {
-        ServerSocket serverSocket = new ServerSocket(port);
+        InetAddress addr = InetAddress.getByName(hostName);
+        ServerSocket serverSocket = new ServerSocket(port, 50, addr);
         System.out.println("Server is waiting for connection");
         Socket clientSocket = serverSocket.accept();
         System.out.println("Server accepted");
+        
         try (
             PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);                   
             BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
@@ -64,6 +68,7 @@ public class NetworkMonitorThread extends Thread
 
     private void startClientSocket() throws IOException
     {
+        System.out.println("Trying to connect to server...");
         try (
             Socket echoSocket = new Socket(hostName, port);
             PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);

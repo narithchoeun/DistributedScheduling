@@ -10,12 +10,12 @@ public class Main
 
     public static void main(String[] args)
     {
-        tokenManager.start();
+        // tokenManager.start();
         networkMonitor.start();
 
-        for(int i = 0; i < num_workers; i++) {
-            workers[i] = new WorkerThread(i);
-            workers[i].start();
-        }
+        // for(int i = 0; i < num_workers; i++) {
+        //     workers[i] = new WorkerThread(i);
+        //     workers[i].start();
+        // }
     }
 }
