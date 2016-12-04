@@ -21,7 +21,7 @@ public class WorkerThread extends Thread
     public void run()
     {
         requestToken();
-        System.out.println("On iteration " + counter + " worker " + id + " requested the token");
+        // System.out.println("On iteration " + counter + " worker " + id + " requested the token");
     }
 
 	// make a request for the local token (insert in queue & inform local TokenManagerThr) - wait for token to be allocated by local TokenManagerThr

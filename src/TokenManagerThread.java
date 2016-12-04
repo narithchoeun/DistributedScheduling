@@ -34,6 +34,8 @@ public class TokenManagerThread extends Thread
     	token_available = true;
     	this.token = token;
 
+        System.out.println("TM Handle Token");
+
     	checkWorkers();
     }
 
@@ -89,7 +91,7 @@ public class TokenManagerThread extends Thread
         // queue.add(0);
         try {
             if (queue.peek() == null) {
-                System.out.println("Waiting for next action");
+                System.out.println("QUEUE Waiting for next action");
                 return;
             }
 
@@ -103,11 +105,12 @@ public class TokenManagerThread extends Thread
         // if (token not available) or (token at remote host) or (queue empty)
 		// wait here for next action
     	if (!token_available) {
-    		System.out.println("Waiting for next action");
+    		System.out.println("TOKEN Waiting for next action");
 		}
         // send to remote
 		else if (id == -1 && token_available) {
 			try {
+                System.out.println("TM Send to Remote");
 				Main.networkMonitor.sendToken(token);
 				token_available = false;
 				token = Main.null_token;
@@ -119,7 +122,10 @@ public class TokenManagerThread extends Thread
 		// handle token locally to local worker based on their id
 		else if (id != -1 && token_available) {
 			try {
+                System.out.println("TM handle tocken locally");
+                token_available = false;
 				local_requester = true;
+                
 				Main.networkMonitor.popRemoteManagerQueue();
 
                 Main.workers[id].handleToken(this.token);
