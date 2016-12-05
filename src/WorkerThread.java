@@ -8,7 +8,7 @@ public class WorkerThread extends Thread
     private Random rand = new Random();
     private int maxSleepTime = 40;
     private int counter = 0;
-    private int max_iterations = 5;
+    private int max_iterations = 100;
 
     public WorkerThread(int id)
     {
