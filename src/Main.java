@@ -7,7 +7,8 @@ public class Main
     public static NetworkMonitorThread networkMonitor = new NetworkMonitorThread();
     public static WorkerThread workers[] = new WorkerThread[5];
     public static Queue<Integer> queue = new LinkedList<Integer>();
-    private static int num_workers = 5;
+    private static int num_workers = 2;
+    public static int max_count = 20;
     public static int token = 100;
     public static int null_token = -1000;
     public static int remote_token = -1;

@@ -70,7 +70,7 @@ public class TokenManagerThread extends Thread
         try {
            Main.queue.add(Main.remote_token);
            // System.out.println("Add remote to queue");
-           printQueue();
+           // printQueue();
         } catch (Exception e) {
 			e.printStackTrace();
         } finally {
@@ -110,7 +110,7 @@ public class TokenManagerThread extends Thread
             else if (!token_available) {
                 return;
             }
-
+            printQueue();
             id = Main.queue.remove();
         } catch (Exception e) {
             e.printStackTrace();
@@ -137,7 +137,7 @@ public class TokenManagerThread extends Thread
                 token_available = false;
 				local_requester = true;
 
-				Main.networkMonitor.popRemoteManagerQueue();
+				// Main.networkMonitor.popRemoteManagerQueue();
 
                 Main.workers[id].handleToken(this.token);
                 this.token = Main.null_token;

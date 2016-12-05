@@ -8,7 +8,7 @@ public class WorkerThread extends Thread
     private Random rand = new Random();
     private int maxSleepTime = 40;
     private int counter = 0;
-    private int max_iterations = 2;
+    private int max_iterations = 5;
 
     public WorkerThread(int id)
     {
@@ -21,13 +21,12 @@ public class WorkerThread extends Thread
     public void run()
     {
         requestToken();
-        // System.out.println("On iteration " + counter + " worker " + id + " requested the token");
     }
 
 	// make a request for the local token (insert in queue & inform local TokenManagerThr) - wait for token to be allocated by local TokenManagerThr
     private void requestToken()
     {
-        if (counter < max_iterations) {
+        if (counter != max_iterations) {
             counter++;
             Main.tokenManager.addWorkerToQueue(this.id);
         } else {
@@ -41,9 +40,17 @@ public class WorkerThread extends Thread
     {
         this.token = token;
 
-        System.out.println("Increment counter locally and remotely");
+        // System.out.println("Increment counter locally and remotely");
 
-        System.out.println("Token Handled from worker " + this.id);
+        Main.shared_counter++;
+        Main.networkMonitor.incrementSharedCounter();
+
+        if (Main.shared_counter == Main.max_count) {
+            System.out.println("Completed " + Main.shared_counter + " iterations");
+            System.exit(1);
+        }
+
+        // System.out.println("Token Handled from worker " + this.id);
         
         returnToken();
     }
@@ -54,13 +61,6 @@ public class WorkerThread extends Thread
     {
         Main.tokenManager.handleToken(this.token);
         this.token = Main.null_token;
-
-        Main.shared_counter++;
-        Main.networkMonitor.incrementSharedCounter();
-
-        if (Main.shared_counter == 50) {
-            System.exit(1);
-        }
 
         sleepWorker();
     }
