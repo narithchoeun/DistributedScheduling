@@ -38,19 +38,30 @@ public class NetworkMonitorThread extends Thread
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);                   
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            Main.startWorkers();
+
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
             // Start Sever with Token give to client on connection
             PrintStream p = new PrintStream(socket.getOutputStream());
             p.println(Main.token);
 
             String clientInput;
-            while ((clientInput = in.readLine()) != null) {
-                // System.out.println("Message from client " + clientInput);
-                
+            while ((clientInput = in.readLine()) != null) {                
                 handlePacket(clientInput);
             }
         } catch (IOException e) {
-            System.out.println("Exception caught when trying to listen on port "
-                + port + " or listening for a connection");
+            System.out.println("Exception caught when trying to listen on port " + port + " or listening for a connection");
             System.out.println(e.getMessage());
         }
     }
@@ -64,10 +75,10 @@ public class NetworkMonitorThread extends Thread
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
             BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             
+            Main.startWorkers();
+
             String serverInput;
-            while ((serverInput = input.readLine()) != null) {
-                // System.out.println("Message from server " + serverInput);
-                
+            while ((serverInput = input.readLine()) != null) {                
                 handlePacket(serverInput);
             }
         } catch (UnknownHostException e) {

@@ -8,7 +8,7 @@ public class WorkerThread extends Thread
     private Random rand = new Random();
     private int maxSleepTime = 40;
     private int counter = 0;
-    private int max_iterations = 100;
+    private int max_iterations = 2;
 
     public WorkerThread(int id)
     {
@@ -57,6 +57,10 @@ public class WorkerThread extends Thread
 
         Main.shared_counter++;
         Main.networkMonitor.incrementSharedCounter();
+
+        if (Main.shared_counter == 50) {
+            System.exit(1);
+        }
 
         sleepWorker();
     }

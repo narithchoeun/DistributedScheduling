@@ -11,7 +11,7 @@ public class TokenManagerThread extends Thread
 	private static Lock lock = new ReentrantLock();
     
     // Queue in Main?
-    private static Queue<Integer> queue = new LinkedList<Integer>();
+    // private static Queue<Integer> queue = new LinkedList<Integer>();
     private int token;
     private boolean token_available;
     private boolean local_requester;
@@ -34,8 +34,6 @@ public class TokenManagerThread extends Thread
     	token_available = true;
     	this.token = token;
 
-        System.out.println("TM Handle Token");
-
     	checkWorkers();
     }
 
@@ -44,7 +42,7 @@ public class TokenManagerThread extends Thread
         lock.lock();
 
         try {
-    	   queue.add(worker);
+    	   Main.queue.add(worker);
            Main.networkMonitor.addWorkerToRemoteQueue();
         } catch (Exception e) {
 			e.printStackTrace();
@@ -58,7 +56,7 @@ public class TokenManagerThread extends Thread
     public void printQueue()
     {
         System.out.print("Queue: ");
-        for(int s : queue) { 
+        for(int s : Main.queue) { 
             System.out.print(s + " "); 
         }
 
@@ -70,7 +68,7 @@ public class TokenManagerThread extends Thread
         lock.lock();
 
         try {
-           queue.add(Main.remote_token);
+           Main.queue.add(Main.remote_token);
            // System.out.println("Add remote to queue");
            printQueue();
         } catch (Exception e) {
@@ -87,8 +85,8 @@ public class TokenManagerThread extends Thread
         lock.lock();
 
         try {
-        	if (queue.peek() != null || queue.peek() == Main.remote_token)
-                queue.remove();
+        	if (Main.queue.peek() != null && Main.queue.peek() == Main.remote_token)
+                Main.queue.remove();
         } catch (Exception e) {
 			e.printStackTrace();
         } finally {
@@ -102,14 +100,18 @@ public class TokenManagerThread extends Thread
         int id = -3;
 
         lock.lock();
-        // queue.add(0);
+
         try {
-            if (queue.peek() == null || !token_available) {
-                System.out.println("TM Waiting for next action");
+            if (Main.queue.peek() == null) {
+                Main.networkMonitor.sendToken(token);
+                // System.out.println("TM Waiting for next action");
+                return;
+            }
+            else if (!token_available) {
                 return;
             }
 
-            id = queue.remove();
+            id = Main.queue.remove();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -119,7 +121,7 @@ public class TokenManagerThread extends Thread
         // send to remote
 		if (id == Main.remote_token && token_available) {
 			try {
-                System.out.println("TM Send to Remote");
+                // System.out.println("TM Send to Remote");
 				Main.networkMonitor.sendToken(token);
 				token_available = false;
 				token = Main.null_token;
@@ -131,7 +133,7 @@ public class TokenManagerThread extends Thread
 		// handle token locally to local worker based on their id
 		else if (id != Main.remote_token && token_available) {
 			try {
-                System.out.println("TM handle tocken locally");
+                // System.out.println("TM handle tocken locally");
                 token_available = false;
 				local_requester = true;
 
