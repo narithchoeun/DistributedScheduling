@@ -34,17 +34,17 @@ public class NetworkMonitorThread extends Thread
         System.out.println("Server accepted");
         
 
-        try (
+        try {
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);                   
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        ) {
+
             // Start Sever with Token give to client on connection
             PrintStream p = new PrintStream(socket.getOutputStream());
             p.println(Main.token);
-            
+
             String clientInput;
             while ((clientInput = in.readLine()) != null) {
-                System.out.println("Message from client " + clientInput);
+                // System.out.println("Message from client " + clientInput);
                 
                 handlePacket(clientInput);
             }
@@ -60,14 +60,13 @@ public class NetworkMonitorThread extends Thread
         System.out.println("Trying to connect to server...");
         socket = new Socket(hostName, port);
 
-        try (
+        try {
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
             BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        ) {
             
             String serverInput;
             while ((serverInput = input.readLine()) != null) {
-                System.out.println("Message from server " + serverInput);
+                // System.out.println("Message from server " + serverInput);
                 
                 handlePacket(serverInput);
             }
@@ -86,17 +85,17 @@ public class NetworkMonitorThread extends Thread
 
         // if packet a worker has been added to remote queue
         if (item == Main.remote_token) {
-            System.out.println("Add Remote Worker to Queue");
+            // System.out.println("Add Remote Worker to Queue");
             Main.tokenManager.addRemoteWorkerToQueue();
         } 
         // If a worker has been popped from the remote queue
         else if (item == Main.busy_token) {
-            System.out.println("Remote Pop from Queue");
+            // System.out.println("Remote Pop from Queue");
             Main.tokenManager.remotePopFromQueue();
         }
         // If increment remote counter
         else if (item == Main.remote_increment) {
-            System.out.println("Remote counter increment");
+            // System.out.println("Remote counter increment");
             Main.shared_counter++;
         }
         // If the token has been sent

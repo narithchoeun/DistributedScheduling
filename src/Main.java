@@ -21,4 +21,12 @@ public class Main
             workers[i].start();
         }
     }
+
+    // public static void startWorkers()
+    // {
+    //     for(int i = 0; i < num_workers; i++) {
+    //         workers[i] = new WorkerThread(i);
+    //         workers[i].start();
+    //     }
+    // }
 }

@@ -30,6 +30,8 @@ public class WorkerThread extends Thread
         if (counter < max_iterations) {
             counter++;
             Main.tokenManager.addWorkerToQueue(this.id);
+        } else {
+            System.out.println("Shared counter: " + Main.shared_counter);
         }
     }
 
