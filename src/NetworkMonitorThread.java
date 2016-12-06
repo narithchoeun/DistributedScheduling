@@ -108,6 +108,11 @@ public class NetworkMonitorThread extends Thread
         else if (item == Main.remote_increment) {
             // System.out.println("Remote counter increment");
             Main.shared_counter++;
+
+            if (Main.shared_counter == Main.max_count) {
+                System.out.println("Reached " + Main.max_count + " iterations");
+                System.exit(1);
+            }
         }
         // If the token has been sent
         else {
