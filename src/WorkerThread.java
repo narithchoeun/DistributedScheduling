@@ -34,7 +34,6 @@ public class WorkerThread extends Thread
         }
     }
 
-    // TODO: increment and manage counter locally and remotely
 	// use token: output counter value & increment counter value
     public void handleToken(int token) throws Exception
     {
@@ -47,6 +46,11 @@ public class WorkerThread extends Thread
 
         if (Main.shared_counter == Main.max_count) {
             System.out.println("Completed " + Main.shared_counter + " iterations");
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             System.exit(1);
         }
 

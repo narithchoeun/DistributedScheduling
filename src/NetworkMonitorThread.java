@@ -111,6 +111,12 @@ public class NetworkMonitorThread extends Thread
 
             if (Main.shared_counter == Main.max_count) {
                 System.out.println("Reached " + Main.max_count + " iterations");
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 System.exit(1);
             }
         }
