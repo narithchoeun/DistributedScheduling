@@ -1,17 +1,8 @@
 import java.util.concurrent.locks.*;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.io.PrintStream;
-import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.Scanner;
 
 public class TokenManagerThread extends Thread
 {
 	private static Lock lock = new ReentrantLock();
-    
-    // Queue in Main?
-    // private static Queue<Integer> queue = new LinkedList<Integer>();
     private int token;
     private boolean token_available;
     private boolean local_requester;
@@ -23,12 +14,14 @@ public class TokenManagerThread extends Thread
     	local_requester = false;
     }
 
+	// prints message to display status, will not execute anything until requests are made
     public void run()
     {
         System.out.println("Waiting for next action");
     }
 
 	// if token is returned, flag token is available
+	// check queue and handle workers
     public void handleToken(int token)
     {
     	token_available = true;
@@ -37,6 +30,8 @@ public class TokenManagerThread extends Thread
     	checkWorkers();
     }
 
+	// enqueue worker based on their id, and a -1 to the remote queue
+	// check queue and handle workers
     public void addWorkerToQueue(int worker)
     {
         lock.lock();
@@ -53,16 +48,19 @@ public class TokenManagerThread extends Thread
     	checkWorkers();
     }
 
+	// print current elements in queue
     public void printQueue()
     {
         System.out.print("Queue: ");
-        for(int s : Main.queue) { 
-            System.out.print(s + " "); 
+        for(int s : Main.queue) {
+            System.out.print(s + " ");
         }
 
         System.out.println();
     }
 
+	// enqueue request to remote queue
+	// check local queue and handle workers
     public void addRemoteWorkerToQueue()
     {
         lock.lock();
@@ -80,6 +78,7 @@ public class TokenManagerThread extends Thread
         checkWorkers();
     }
 
+	// pop local queue of remote request
     public void remotePopFromQueue()
     {
         lock.lock();
@@ -100,7 +99,6 @@ public class TokenManagerThread extends Thread
         int id = -3;
 
         lock.lock();
-
         try {
             if (Main.queue.peek() == null) {
                 Main.networkMonitor.sendToken(token);
@@ -117,7 +115,7 @@ public class TokenManagerThread extends Thread
         } finally {
             lock.unlock();
         }
-    	
+
         // send to remote
 		if (id == Main.remote_token && token_available) {
 			try {
@@ -136,8 +134,6 @@ public class TokenManagerThread extends Thread
                 // System.out.println("TM handle tocken locally");
                 token_available = false;
 				local_requester = true;
-
-				// Main.networkMonitor.popRemoteManagerQueue();
 
                 Main.workers[id].handleToken(this.token);
                 this.token = Main.null_token;

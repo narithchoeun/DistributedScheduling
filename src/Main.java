@@ -16,7 +16,7 @@ public class Main
     public static int remote_increment = -4;
     public static int shared_counter = 0;
 
-    // TODO: Wait til both sides are completed
+    // Wait til both sides are completed
     public static boolean current_completed = false;
     public static boolean other_completed = false;
 
@@ -24,13 +24,9 @@ public class Main
     {
         tokenManager.start();
         networkMonitor.start();
-
-        // for(int i = 0; i < num_workers; i++) {
-        //     workers[i] = new WorkerThread(i);
-        //     workers[i].start();
-        // }
     }
 
+    // start workers called when client connects
     public static void startWorkers()
     {
         for(int i = 0; i < num_workers; i++) {

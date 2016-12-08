@@ -1,4 +1,3 @@
-import java.util.concurrent.locks.*;
 import java.util.Random;
 
 public class WorkerThread extends Thread
@@ -10,6 +9,7 @@ public class WorkerThread extends Thread
     private int counter = 0;
     private int max_iterations = 100;
 
+    //assigns an id to worker
     public WorkerThread(int id)
     {
         this.id = id;
@@ -30,7 +30,7 @@ public class WorkerThread extends Thread
             counter++;
             Main.tokenManager.addWorkerToQueue(this.id);
         } else {
-            System.out.println("Shared counter: " + Main.shared_counter);
+            // System.out.println("Shared counter: " + Main.shared_counter);
         }
     }
 
@@ -38,9 +38,6 @@ public class WorkerThread extends Thread
     public void handleToken(int token) throws Exception
     {
         this.token = token;
-
-        // System.out.println("Increment counter locally and remotely");
-
         Main.shared_counter++;
         Main.networkMonitor.incrementSharedCounter();
 
@@ -54,13 +51,10 @@ public class WorkerThread extends Thread
             System.exit(1);
         }
 
-        // System.out.println("Token Handled from worker " + this.id);
-        
         returnToken();
     }
 
 	// return token to local TokenManagerThr
-    // reset token
     private void returnToken() throws Exception
     {
         Main.tokenManager.handleToken(this.token);
@@ -69,6 +63,7 @@ public class WorkerThread extends Thread
         sleepWorker();
     }
 
+    //worker sleeps for a random amount of time
     private void sleepWorker()
     {
         try {
@@ -76,7 +71,6 @@ public class WorkerThread extends Thread
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         requestToken();
     }
 
